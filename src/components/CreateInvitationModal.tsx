@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useInvitationStore } from '@/stores/invitationStore';
@@ -68,13 +67,18 @@ export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModal
       
       toast({
         title: "¡Invitación creada exitosamente!",
-        description: `Código de invitación: ${newInvitation.code}`,
+        description: `Código: ${newInvitation.code} (Base64: ${newInvitation.codeBase64.slice(0, 10)}...)`,
       });
       
       resetForm();
       onClose();
     } catch (err) {
       setError('Error al crear la invitación');
+      toast({
+        title: "Error",
+        description: "No se pudo crear la invitación",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }

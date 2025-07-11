@@ -12,6 +12,7 @@ export interface User {
 export interface Invitation {
   id: string;
   code: string; // 2 letters + 4 numbers
+  codeBase64: string; // base64 encoded version of the code
   guestFirstName: string;
   guestLastName: string;
   carModel: string;
@@ -33,4 +34,11 @@ export interface QRData {
   residentAddress: string;
   residentId: string;
   invitationCode: string;
+}
+
+export interface WebhookPayload {
+  qrCode: string;
+  residentPhone: string;
+  guestFullName: string;
+  invitationDate: string;
 }

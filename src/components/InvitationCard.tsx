@@ -46,6 +46,9 @@ export const InvitationCard = ({ invitation, showActions }: InvitationCardProps)
                   <Hash className="h-3 w-3" />
                   <span className="font-mono">{invitation.code}</span>
                 </div>
+                <div className="text-xs text-koto-gray-dark/50 mt-1">
+                  Base64: {invitation.codeBase64.slice(0, 12)}...
+                </div>
               </div>
             </div>
             

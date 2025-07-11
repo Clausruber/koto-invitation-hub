@@ -6,6 +6,7 @@ export const generateQRData = (invitation: Invitation, user: User): QRData => {
     guestName: `${invitation.guestFirstName} ${invitation.guestLastName}`,
     carModel: invitation.carModel,
     visitDate: invitation.visitDate,
+    visitTime: invitation.visitTime,
     residentName: `${user.firstName} ${user.lastName}`,
     residentAddress: user.address,
     residentId: user.residentId,
@@ -20,6 +21,7 @@ INVITACIÓN KOTO21
 Invitado: ${data.guestName}
 Vehículo: ${data.carModel}
 Fecha: ${data.visitDate}
+Hora: ${data.visitTime}
 Residente: ${data.residentName}
 Dirección: ${data.residentAddress}
 ID Residente: ${data.residentId}

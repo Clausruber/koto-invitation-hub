@@ -2,13 +2,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Invitation, User, WebhookPayload } from '@/types';
-import { generateInvitationCode } from '@/utils/generators';
+import { generateInvitationCode, formatDateForDatabase } from '@/utils/generators';
 import { generateQRData, generateQRCodeURL } from '@/utils/qrGenerator';
 import { sendInvitationWebhook } from '@/services/webhookService';
 
 interface InvitationState {
   invitations: Invitation[];
-  createInvitation: (data: Omit<Invitation, 'id' | 'code' | 'codeBase64' | 'createdAt' | 'qrCode' | 'isActive'>, user: User) => Promise<Invitation>;
+  createInvitation: (data: Omit<Invitation, 'id' | 'code' | 'codeBase64' | 'createdAt' | 'qrCode' | 'isActive' | 'formattedDate'>, user: User) => Promise<Invitation>;
   getActiveInvitations: (residentId: string) => Invitation[];
   getInvitationHistory: (residentId: string) => Invitation[];
   deactivateInvitation: (id: string) => void;
@@ -28,11 +28,16 @@ export const useInvitationStore = create<InvitationState>()(
         const code = generateInvitationCode();
         const codeBase64 = encodeToBase64(code);
         
+        // Parse the visit date to create formatted date
+        const visitDate = new Date(data.visitDate);
+        const formattedDate = formatDateForDatabase(visitDate);
+        
         const newInvitation: Invitation = {
           ...data,
           id: Date.now().toString(),
           code,
           codeBase64,
+          formattedDate,
           createdAt: new Date().toISOString(),
           isActive: true
         };
@@ -46,13 +51,17 @@ export const useInvitationStore = create<InvitationState>()(
           invitations: [...state.invitations, newInvitation]
         }));
         
-        // Send webhook
+        // Send webhook with all required information
         try {
           const webhookPayload: WebhookPayload = {
             qrCode: newInvitation.qrCode || '',
             residentPhone: user.whatsapp,
             guestFullName: `${newInvitation.guestFirstName} ${newInvitation.guestLastName}`,
-            invitationDate: newInvitation.visitDate
+            residentFullName: `${user.firstName} ${user.lastName}`,
+            residentAddress: user.address,
+            invitationDate: newInvitation.visitDate,
+            formattedDate: newInvitation.formattedDate,
+            visitTime: newInvitation.visitTime
           };
           
           const webhookSent = await sendInvitationWebhook(webhookPayload);

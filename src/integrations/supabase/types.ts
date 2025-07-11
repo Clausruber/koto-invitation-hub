@@ -14,7 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      invitations: {
+        Row: {
+          car_model: string
+          code: string
+          code_base64: string
+          created_at: string
+          formatted_date: string
+          guest_first_name: string
+          guest_last_name: string
+          id: string
+          is_active: boolean
+          license_plate: string
+          qr_code: string | null
+          resident_address: string
+          resident_id: string
+          resident_name: string
+          updated_at: string
+          visit_date: string
+          visit_time: string
+        }
+        Insert: {
+          car_model: string
+          code: string
+          code_base64: string
+          created_at?: string
+          formatted_date: string
+          guest_first_name: string
+          guest_last_name: string
+          id?: string
+          is_active?: boolean
+          license_plate: string
+          qr_code?: string | null
+          resident_address: string
+          resident_id: string
+          resident_name: string
+          updated_at?: string
+          visit_date: string
+          visit_time: string
+        }
+        Update: {
+          car_model?: string
+          code?: string
+          code_base64?: string
+          created_at?: string
+          formatted_date?: string
+          guest_first_name?: string
+          guest_last_name?: string
+          id?: string
+          is_active?: boolean
+          license_plate?: string
+          qr_code?: string | null
+          resident_address?: string
+          resident_id?: string
+          resident_name?: string
+          updated_at?: string
+          visit_date?: string
+          visit_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_resident_id_fkey"
+            columns: ["resident_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["resident_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          address: string
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          resident_id: string
+          user_id: string | null
+          whatsapp: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          resident_id: string
+          user_id?: string | null
+          whatsapp: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          resident_id?: string
+          user_id?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

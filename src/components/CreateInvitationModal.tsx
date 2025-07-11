@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { useInvitationStore } from '@/stores/invitationStore';
@@ -5,11 +6,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { getDateOptions } from '@/utils/generators';
-import { User, Car, Calendar, Hash } from 'lucide-react';
+import { User, Car, Hash } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { DateTimePicker } from './DateTimePicker';
 
 interface CreateInvitationModalProps {
   isOpen: boolean;
@@ -22,7 +22,8 @@ export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModal
     guestLastName: '',
     carModel: '',
     licensePlate: '',
-    visitDate: ''
+    visitDate: undefined as Date | undefined,
+    visitTime: ''
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -30,11 +31,17 @@ export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModal
   const { user } = useAuthStore();
   const { createInvitation } = useInvitationStore();
   const { toast } = useToast();
-  
-  const dateOptions = getDateOptions();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    setFormData(prev => ({ ...prev, visitDate: date }));
+  };
+
+  const handleTimeChange = (time: string) => {
+    setFormData(prev => ({ ...prev, visitTime: time }));
   };
 
   const resetForm = () => {
@@ -43,7 +50,8 @@ export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModal
       guestLastName: '',
       carModel: '',
       licensePlate: '',
-      visitDate: ''
+      visitDate: undefined,
+      visitTime: ''
     });
     setError('');
   };
@@ -52,12 +60,22 @@ export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModal
     e.preventDefault();
     if (!user) return;
     
+    if (!formData.visitDate || !formData.visitTime) {
+      setError('Por favor selecciona fecha y hora de visita');
+      return;
+    }
+    
     setError('');
     setIsLoading(true);
 
     try {
       const invitationData = {
-        ...formData,
+        guestFirstName: formData.guestFirstName,
+        guestLastName: formData.guestLastName,
+        carModel: formData.carModel,
+        licensePlate: formData.licensePlate,
+        visitDate: formData.visitDate.toLocaleDateString('es-ES'),
+        visitTime: formData.visitTime,
         residentId: user.residentId,
         residentName: `${user.firstName} ${user.lastName}`,
         residentAddress: user.address
@@ -67,7 +85,7 @@ export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModal
       
       toast({
         title: "¡Invitación creada exitosamente!",
-        description: `Código: ${newInvitation.code} (Base64: ${newInvitation.codeBase64.slice(0, 10)}...)`,
+        description: `Código: ${newInvitation.code} - ${newInvitation.formattedDate} a las ${newInvitation.visitTime}`,
       });
       
       resetForm();
@@ -173,26 +191,12 @@ export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModal
             </div>
           </div>
           
-          <div className="space-y-2">
-            <Label className="text-koto-gray-dark font-medium text-sm">
-              Fecha de Visita
-            </Label>
-            <Select value={formData.visitDate} onValueChange={(value) => handleInputChange('visitDate', value)}>
-              <SelectTrigger className="h-10 border-koto-gray-dark/20 focus:border-koto-blue">
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-2 text-koto-gray-dark/50" />
-                  <SelectValue placeholder="Selecciona una fecha" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="bg-white border border-koto-gray-dark/20">
-                {dateOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label} - {option.value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <DateTimePicker
+            date={formData.visitDate}
+            time={formData.visitTime}
+            onDateChange={handleDateChange}
+            onTimeChange={handleTimeChange}
+          />
           
           <div className="flex space-x-3 pt-4">
             <Button

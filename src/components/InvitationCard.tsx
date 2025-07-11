@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useInvitationStore } from '@/stores/invitationStore';
-import { QrCode, User, Car, Calendar, MapPin, Hash, Download, X } from 'lucide-react';
+import { QrCode, User, Car, Calendar, MapPin, Hash, Clock, X } from 'lucide-react';
 import { QRCodeModal } from './QRCodeModal';
 
 interface InvitationCardProps {
@@ -76,8 +76,16 @@ export const InvitationCard = ({ invitation, showActions }: InvitationCardProps)
               <Calendar className="h-4 w-4 text-koto-green" />
               <div>
                 <p className="text-sm font-medium text-koto-gray-dark">Fecha de Visita</p>
-                <p className="text-sm text-koto-gray-dark/70">{invitation.visitDate}</p>
+                <p className="text-sm text-koto-gray-dark/70">{invitation.formattedDate || invitation.visitDate}</p>
               </div>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <Clock className="h-4 w-4 text-koto-blue" />
+            <div>
+              <p className="text-sm font-medium text-koto-gray-dark">Hora de Visita</p>
+              <p className="text-sm text-koto-gray-dark/70">{invitation.visitTime}</p>
             </div>
           </div>
           

@@ -1,7 +1,7 @@
 
 import { WebhookPayload } from '@/types';
 
-const WEBHOOK_URL = 'https://n8n.lanuevadigital.com/webhook-test/koto';
+const WEBHOOK_URL = 'https://webhook.lanuevadigital.com/webhook/koto';
 
 export const sendInvitationWebhook = async (payload: WebhookPayload): Promise<boolean> => {
   try {

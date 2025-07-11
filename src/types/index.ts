@@ -18,6 +18,8 @@ export interface Invitation {
   carModel: string;
   licensePlate: string;
   visitDate: string;
+  visitTime: string;
+  formattedDate: string; // Format: "Lunes, 15/05"
   createdAt: string;
   residentId: string;
   residentName: string;
@@ -30,6 +32,7 @@ export interface QRData {
   guestName: string;
   carModel: string;
   visitDate: string;
+  visitTime: string;
   residentName: string;
   residentAddress: string;
   residentId: string;
@@ -40,5 +43,9 @@ export interface WebhookPayload {
   qrCode: string;
   residentPhone: string;
   guestFullName: string;
+  residentFullName: string;
+  residentAddress: string;
   invitationDate: string;
+  formattedDate: string;
+  visitTime: string;
 }

@@ -1,15 +1,12 @@
 
-import { useState } from 'react';
-import { useAuthStore } from '@/stores/authStore';
-import { useInvitationStore } from '@/stores/invitationStore';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { User, Car, Hash } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { User } from 'lucide-react';
 import { DateTimePicker } from './DateTimePicker';
+import { GuestInfoForm } from './GuestInfoForm';
+import { VehicleInfoForm } from './VehicleInfoForm';
+import { useInvitationForm } from '@/hooks/useInvitationForm';
 
 interface CreateInvitationModalProps {
   isOpen: boolean;
@@ -17,90 +14,16 @@ interface CreateInvitationModalProps {
 }
 
 export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModalProps) => {
-  const [formData, setFormData] = useState({
-    guestFirstName: '',
-    guestLastName: '',
-    carModel: '',
-    licensePlate: '',
-    visitDate: undefined as Date | undefined,
-    visitTime: ''
-  });
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const { user } = useAuthStore();
-  const { createInvitation } = useInvitationStore();
-  const { toast } = useToast();
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleDateChange = (date: Date | undefined) => {
-    setFormData(prev => ({ ...prev, visitDate: date }));
-  };
-
-  const handleTimeChange = (time: string) => {
-    setFormData(prev => ({ ...prev, visitTime: time }));
-  };
-
-  const resetForm = () => {
-    setFormData({
-      guestFirstName: '',
-      guestLastName: '',
-      carModel: '',
-      licensePlate: '',
-      visitDate: undefined,
-      visitTime: ''
-    });
-    setError('');
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-    
-    if (!formData.visitDate || !formData.visitTime) {
-      setError('Por favor selecciona fecha y hora de visita');
-      return;
-    }
-    
-    setError('');
-    setIsLoading(true);
-
-    try {
-      const invitationData = {
-        guestFirstName: formData.guestFirstName,
-        guestLastName: formData.guestLastName,
-        carModel: formData.carModel,
-        licensePlate: formData.licensePlate,
-        visitDate: formData.visitDate.toLocaleDateString('es-ES'),
-        visitTime: formData.visitTime,
-        residentId: user.residentId,
-        residentName: `${user.firstName} ${user.lastName}`,
-        residentAddress: user.address
-      };
-      
-      const newInvitation = await createInvitation(invitationData, user);
-      
-      toast({
-        title: "¡Invitación creada exitosamente!",
-        description: `Código: ${newInvitation.code} - ${newInvitation.formattedDate} a las ${newInvitation.visitTime}`,
-      });
-      
-      resetForm();
-      onClose();
-    } catch (err) {
-      setError('Error al crear la invitación');
-      toast({
-        title: "Error",
-        description: "No se pudo crear la invitación",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    formData,
+    error,
+    isLoading,
+    handleInputChange,
+    handleDateChange,
+    handleTimeChange,
+    handleSubmit,
+    resetForm
+  } = useInvitationForm(onClose);
 
   const handleClose = () => {
     resetForm();
@@ -129,67 +52,17 @@ export const CreateInvitationModal = ({ isOpen, onClose }: CreateInvitationModal
             </Alert>
           )}
           
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="guestFirstName" className="text-koto-gray-dark font-medium text-sm">
-                Nombre
-              </Label>
-              <Input
-                id="guestFirstName"
-                value={formData.guestFirstName}
-                onChange={(e) => handleInputChange('guestFirstName', e.target.value)}
-                className="h-10 border-koto-gray-dark/20 focus:border-koto-blue"
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="guestLastName" className="text-koto-gray-dark font-medium text-sm">
-                Apellido
-              </Label>
-              <Input
-                id="guestLastName"
-                value={formData.guestLastName}
-                onChange={(e) => handleInputChange('guestLastName', e.target.value)}
-                className="h-10 border-koto-gray-dark/20 focus:border-koto-blue"
-                required
-              />
-            </div>
-          </div>
+          <GuestInfoForm
+            guestFirstName={formData.guestFirstName}
+            guestLastName={formData.guestLastName}
+            onInputChange={handleInputChange}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="carModel" className="text-koto-gray-dark font-medium text-sm">
-              Modelo del Coche
-            </Label>
-            <div className="relative">
-              <Car className="absolute left-3 top-2.5 h-4 w-4 text-koto-gray-dark/50" />
-              <Input
-                id="carModel"
-                value={formData.carModel}
-                onChange={(e) => handleInputChange('carModel', e.target.value)}
-                className="pl-10 h-10 border-koto-gray-dark/20 focus:border-koto-blue"
-                placeholder="Ej: Toyota Corolla"
-                required
-              />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="licensePlate" className="text-koto-gray-dark font-medium text-sm">
-              Placa
-            </Label>
-            <div className="relative">
-              <Hash className="absolute left-3 top-2.5 h-4 w-4 text-koto-gray-dark/50" />
-              <Input
-                id="licensePlate"
-                value={formData.licensePlate}
-                onChange={(e) => handleInputChange('licensePlate', e.target.value.toUpperCase())}
-                className="pl-10 h-10 border-koto-gray-dark/20 focus:border-koto-blue font-mono"
-                placeholder="ABC123"
-                required
-              />
-            </div>
-          </div>
+          <VehicleInfoForm
+            carModel={formData.carModel}
+            licensePlate={formData.licensePlate}
+            onInputChange={handleInputChange}
+          />
           
           <DateTimePicker
             date={formData.visitDate}

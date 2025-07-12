@@ -25,6 +25,7 @@ export type Database = {
           id: string
           is_active: boolean
           license_plate: string
+          public_qr_url: string | null
           qr_code: string | null
           resident_address: string
           resident_id: string
@@ -43,6 +44,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           license_plate: string
+          public_qr_url?: string | null
           qr_code?: string | null
           resident_address: string
           resident_id: string
@@ -61,6 +63,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           license_plate?: string
+          public_qr_url?: string | null
           qr_code?: string | null
           resident_address?: string
           resident_id?: string

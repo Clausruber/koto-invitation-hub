@@ -48,9 +48,12 @@ Código: ${invitation.code}
   };
 
   const handleDownloadQR = () => {
-    if (invitation.qrCode) {
+    // Use public QR URL if available, otherwise fallback to generated QR code
+    const qrImageUrl = invitation.publicQrUrl || invitation.qrCode;
+    
+    if (qrImageUrl) {
       const link = document.createElement('a');
-      link.href = invitation.qrCode;
+      link.href = qrImageUrl;
       link.download = `invitacion-${invitation.code}.png`;
       document.body.appendChild(link);
       link.click();
@@ -66,10 +69,11 @@ Código: ${invitation.code}
   const handleShare = async () => {
     if (navigator.share) {
       try {
+        const qrImageUrl = invitation.publicQrUrl || invitation.qrCode;
         await navigator.share({
           title: 'Invitación Koto21',
           text: invitationInfo,
-          url: invitation.qrCode
+          url: qrImageUrl
         });
       } catch (err) {
         // Si el usuario cancela el share, no mostrar error
@@ -87,6 +91,9 @@ Código: ${invitation.code}
     }
   };
 
+  // Use public QR URL if available, otherwise fallback to generated QR code
+  const displayQrUrl = invitation.publicQrUrl || invitation.qrCode;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="glass-effect border-0 shadow-2xl max-w-md">
@@ -100,9 +107,9 @@ Código: ${invitation.code}
           {/* QR Code */}
           <Card className="bg-white border-2 border-dashed border-koto-blue/30">
             <CardContent className="p-6 text-center">
-              {invitation.qrCode ? (
+              {displayQrUrl ? (
                 <img
-                  src={invitation.qrCode}
+                  src={displayQrUrl}
                   alt="Código QR de la invitación"
                   className="mx-auto w-48 h-48 rounded-lg shadow-lg"
                 />
@@ -119,6 +126,11 @@ Código: ${invitation.code}
                 <p className="text-sm text-koto-gray-dark/70 mt-1">
                   Código de invitación
                 </p>
+                {invitation.publicQrUrl && (
+                  <p className="text-xs text-koto-green mt-1">
+                    ✓ Almacenado en la nube
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>

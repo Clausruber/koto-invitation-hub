@@ -24,6 +24,7 @@ export interface Invitation {
   residentName: string;
   residentAddress: string;
   qrCode?: string;
+  publicQrUrl?: string; // New field for public storage URL
   isActive: boolean;
 }
 
@@ -50,6 +51,7 @@ export interface QRData {
 
 export interface WebhookPayload {
   qrCode: string;
+  publicQrUrl: string; // New field for webhook
   residentPhone: string;
   guestFullName: string;
   residentFullName: string;

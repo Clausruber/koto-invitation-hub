@@ -76,7 +76,7 @@ export const InvitationCard = ({ invitation, showActions }: InvitationCardProps)
               <Calendar className="h-4 w-4 text-koto-green" />
               <div>
                 <p className="text-sm font-medium text-koto-gray-dark">Fecha de Visita</p>
-                <p className="text-sm text-koto-gray-dark/70">{invitation.formattedDate || invitation.visitDate}</p>
+                <p className="text-sm text-koto-gray-dark/70">{invitation.visitDate}</p>
               </div>
             </div>
           </div>

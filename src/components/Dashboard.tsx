@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import { NewsSection } from './NewsSection';
 import { ActiveInvitations } from './ActiveInvitations';
 import { InvitationHistory } from './InvitationHistory';
 import { CreateInvitationModal } from './CreateInvitationModal';
@@ -18,7 +19,7 @@ export const Dashboard = () => {
             Panel de Control
           </h1>
           <p className="text-koto-gray-dark/70 mt-1">
-            Gestiona tus invitaciones de manera fácil y segura
+            Gestiona tus invitaciones y mantente informado
           </p>
         </div>
         
@@ -31,8 +32,14 @@ export const Dashboard = () => {
         </Button>
       </div>
 
-      <Tabs defaultValue="active" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 glass-effect h-12">
+      <Tabs defaultValue="news" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 glass-effect h-12">
+          <TabsTrigger 
+            value="news" 
+            className="data-[state=active]:gradient-primary data-[state=active]:text-white font-medium"
+          >
+            Noticias
+          </TabsTrigger>
           <TabsTrigger 
             value="active" 
             className="data-[state=active]:gradient-primary data-[state=active]:text-white font-medium"
@@ -46,6 +53,10 @@ export const Dashboard = () => {
             Historial
           </TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="news" className="mt-6">
+          <NewsSection />
+        </TabsContent>
         
         <TabsContent value="active" className="mt-6">
           <ActiveInvitations />

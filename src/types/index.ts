@@ -19,13 +19,22 @@ export interface Invitation {
   licensePlate: string;
   visitDate: string;
   visitTime: string;
-  formattedDate: string; // Format: "Lunes, 15/05"
   createdAt: string;
   residentId: string;
   residentName: string;
   residentAddress: string;
   qrCode?: string;
   isActive: boolean;
+}
+
+export interface News {
+  id: string;
+  name: string;
+  noticia: string;
+  fecha: string;
+  imageUrl?: string;
+  userId: string;
+  createdAt: string;
 }
 
 export interface QRData {

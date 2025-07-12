@@ -8,7 +8,7 @@ import { sendInvitationWebhook } from '@/services/webhookService';
 
 interface InvitationState {
   invitations: Invitation[];
-  createInvitation: (data: Omit<Invitation, 'id' | 'code' | 'codeBase64' | 'createdAt' | 'qrCode' | 'isActive' | 'formattedDate'>, user: User) => Promise<Invitation>;
+  createInvitation: (data: Omit<Invitation, 'id' | 'code' | 'codeBase64' | 'createdAt' | 'qrCode' | 'isActive'>, user: User) => Promise<Invitation>;
   getActiveInvitations: (residentId: string) => Invitation[];
   getInvitationHistory: (residentId: string) => Invitation[];
   deactivateInvitation: (id: string) => void;
@@ -28,16 +28,11 @@ export const useInvitationStore = create<InvitationState>()(
         const code = generateInvitationCode();
         const codeBase64 = encodeToBase64(code);
         
-        // Parse the visit date to create formatted date
-        const visitDate = new Date(data.visitDate);
-        const formattedDate = formatDateForDatabase(visitDate);
-        
         const newInvitation: Invitation = {
           ...data,
           id: Date.now().toString(),
           code,
           codeBase64,
-          formattedDate,
           createdAt: new Date().toISOString(),
           isActive: true
         };
@@ -53,6 +48,8 @@ export const useInvitationStore = create<InvitationState>()(
         
         // Send webhook with all required information
         try {
+          const formattedDate = formatDateForDatabase(new Date(newInvitation.visitDate));
+          
           const webhookPayload: WebhookPayload = {
             qrCode: newInvitation.qrCode || '',
             residentPhone: user.whatsapp,
@@ -60,7 +57,7 @@ export const useInvitationStore = create<InvitationState>()(
             residentFullName: `${user.firstName} ${user.lastName}`,
             residentAddress: user.address,
             invitationDate: newInvitation.visitDate,
-            formattedDate: newInvitation.formattedDate,
+            formattedDate: formattedDate,
             visitTime: newInvitation.visitTime
           };
           

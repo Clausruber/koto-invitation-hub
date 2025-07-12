@@ -20,7 +20,6 @@ export type Database = {
           code: string
           code_base64: string
           created_at: string
-          formatted_date: string
           guest_first_name: string
           guest_last_name: string
           id: string
@@ -39,7 +38,6 @@ export type Database = {
           code: string
           code_base64: string
           created_at?: string
-          formatted_date: string
           guest_first_name: string
           guest_last_name: string
           id?: string
@@ -58,7 +56,6 @@ export type Database = {
           code?: string
           code_base64?: string
           created_at?: string
-          formatted_date?: string
           guest_first_name?: string
           guest_last_name?: string
           id?: string
@@ -81,6 +78,36 @@ export type Database = {
             referencedColumns: ["resident_id"]
           },
         ]
+      }
+      news: {
+        Row: {
+          created_at: string
+          fecha: string
+          id: string
+          image_url: string | null
+          name: string
+          noticia: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          fecha?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          noticia: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          fecha?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          noticia?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {

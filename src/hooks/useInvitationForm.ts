@@ -82,7 +82,7 @@ export const useInvitationForm = (onClose: () => void) => {
       
       toast({
         title: "¡Invitación creada exitosamente!",
-        description: `Código: ${newInvitation.code} - ${newInvitation.formattedDate} a las ${newInvitation.visitTime}`,
+        description: `Código: ${newInvitation.code} - ${newInvitation.visitDate} a las ${newInvitation.visitTime}`,
       });
       
       resetForm();
